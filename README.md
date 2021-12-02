@@ -94,7 +94,7 @@ pacman -Sy nasm
     - `C:\software\win-builds-setup\win-builds.exe` -- my renamed executable
     - `C:\software\win-builds-setup\packages\` -- the pakcages I downloaded to setup mirro
   - Run `win-builds.exe` to setup it
-    - select install to `MSYS2"` and specifies its path
+    - select install to `MSYS2"` and specify its path
     - select `i686` rather than `x86_64`
     - You may speficify the mirror directory during setup, e.g. `c:\software\win-builds-setup`
 
