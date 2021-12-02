@@ -109,7 +109,7 @@ pacman -Sy nasm
   - Navigate to `https://github.com/jonathanding/ipxwrapper` and use `Code -> Download Zip`
   - Or clone it `git clone https://github.com/jonathanding/ipxwrapper.git`
 
-- ## In `win-builds` Build Environment
+- In `win-builds` Build Environment
   - Change directory to where you downloaded the source code. There should be a `Makefile` under it
   - Run `make` and cross your fingers
   - You should see these four files in current directory if compilation succeeds
