@@ -43,6 +43,12 @@ struct ipx_interface_ip {
 	uint32_t ipaddr;
 	uint32_t netmask;
 	uint32_t bcast;
+	// if netmask is 255.255.255.255, we will assume the actual subnet mask is 255.255.0.0, and
+	// search the ip table and find all destinations who is in this same subnet
+	// n_bcast_ips are number of destinations found. bcast_ips are all ips found
+	// we assume at most 20 items 
+	uint32_t n_bcast_ips;
+	uint32_t bcast_ips[20];
 	
 	ipx_interface_ip_t *prev;
 	ipx_interface_ip_t *next;

@@ -429,12 +429,19 @@ static void _handle_udp_recv(ipx_packet *packet, size_t packet_size, struct sock
 	}
 	
 	ipx_interface_t *i;
+	uint32_t all_255_mask = inet_addr("255.255.255.255");
+	uint32_t real_mask = inet_addr("255.255.0.0");
 	DL_FOREACH(allow_interfaces, i)
 	{
 		ipx_interface_ip_t *ip;
 		DL_FOREACH(i->ipaddr, ip)
 		{
-			if((ip->ipaddr & ip->netmask) == (src_ip.sin_addr.s_addr & ip->netmask))
+			// if netmask is 255.255.255.255, we should use 255.255.0.0
+			uint32_t mask_to_use = ip->netmask;
+			if (ip->netmask == all_255_mask) {
+				mask_to_use = real_mask;
+			} 
+			if ((ip->ipaddr & mask_to_use) == (src_ip.sin_addr.s_addr & mask_to_use))
 			{
 				source_ok = TRUE;
 			}

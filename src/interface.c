@@ -18,6 +18,7 @@
 #define WINSOCK_API_LINKAGE
 
 #include <windows.h>
+#include <winsock2.h>
 #include <iphlpapi.h>
 #include <utlist.h>
 #include <time.h>
@@ -153,6 +154,10 @@ static bool _push_addr(ipx_interface_t *iface, IP_ADDR_STRING *ip)
 		 * network is preferred.
 		*/
 		
+		DWORD n;
+		uint32_t n_bcast_ips = 0;
+		uint32_t bcast_ips[20];
+
 		if(netmask == inet_addr("255.255.255.255"))
 		{
 			MIB_IPFORWARDTABLE *table = NULL;
@@ -179,7 +184,7 @@ static bool _push_addr(ipx_interface_t *iface, IP_ADDR_STRING *ip)
 				return false;
 			}
 			
-			DWORD n;
+			
 			for(n = 0; n < table->dwNumEntries; ++n)
 			{
 				uint32_t a_ip   = ntohl(ipaddr);
@@ -191,6 +196,23 @@ static bool _push_addr(ipx_interface_t *iface, IP_ADDR_STRING *ip)
 				if(r_mask > 0 && r_mask < a_mask && (a_ip & r_mask) == r_net)
 				{
 					netmask = table->table[n].dwForwardMask;
+				}
+			}
+
+			// if we still failed to find the right subnet mask, we will find ips in 255.255.0.0
+			uint32_t all_255_mask = inet_addr("255.255.255.255");
+			if (netmask == all_255_mask) {
+				// inet_addr returns network order
+				uint32_t real_mask = (inet_addr("255.255.0.0"));
+				for (n = 0; n < table->dwNumEntries; ++n) {
+					uint32_t dst_ip = table->table[n].dwForwardDest;
+					uint32_t dst_mask = table->table[n].dwForwardMask;
+
+					if (dst_mask == all_255_mask && (ipaddr & real_mask) == (dst_ip & real_mask)) {
+						bcast_ips[n_bcast_ips++] = dst_ip;
+						log_printf(LOG_INFO, "-- vlan IP found from route: %s",
+							inet_ntoa(*((struct in_addr*)&dst_ip)));
+					}
 				}
 			}
 			
@@ -207,6 +229,15 @@ static bool _push_addr(ipx_interface_t *iface, IP_ADDR_STRING *ip)
 		addr->ipaddr  = ipaddr;
 		addr->netmask = netmask;
 		addr->bcast   = ipaddr | (~netmask);
+
+		if (n_bcast_ips > sizeof(addr->bcast_ips) / sizeof(addr->bcast_ips[0])) {
+			n_bcast_ips = sizeof(addr->bcast_ips) / sizeof(addr->bcast_ips[0]);
+		}
+		addr->n_bcast_ips = n_bcast_ips;
+
+		for (int i = 0; i < n_bcast_ips; ++i) {
+			addr->bcast_ips[i] = bcast_ips[i];
+		}
 		
 		DL_APPEND(iface->ipaddr, addr);
 	}

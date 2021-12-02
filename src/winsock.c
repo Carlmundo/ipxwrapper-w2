@@ -1372,18 +1372,38 @@ static DWORD ipx_send_packet(
 					
 					bcast.sin_family      = AF_INET;
 					bcast.sin_port        = htons(main_config.udp_port);
-					bcast.sin_addr.s_addr = ip->bcast;
 					
-					if(send_packet(
-						packet,
-						packet_size,
-						(struct sockaddr*)(&bcast),
-						sizeof(bcast)))
-					{
-						send_ok = TRUE;
-					}
-					else{
-						send_error = WSAGetLastError();
+					// it could be subnet 255.255.255.255 which we already listed all vlan ips
+					if (ip->n_bcast_ips == 0) {
+						bcast.sin_addr.s_addr = ip->bcast;
+					
+						if(send_packet(
+							packet,
+							packet_size,
+							(struct sockaddr*)(&bcast),
+							sizeof(bcast)))
+						{
+							send_ok = TRUE;
+						}
+						else{
+							send_error = WSAGetLastError();
+						}
+					} else {
+						log_printf(LOG_DEBUG, "Broadcast to 255.255.255.255 subnet so we manually send to %u ips", ip->n_bcast_ips);
+						for (int i = 0; i < ip->n_bcast_ips; ++i) {
+							bcast.sin_addr.s_addr = ip->bcast_ips[i];
+							if(send_packet(
+								packet,
+								packet_size,
+								(struct sockaddr*)(&bcast),
+								sizeof(bcast)))
+							{
+								send_ok = TRUE;
+							}
+							else{
+								send_error = WSAGetLastError();
+							}
+						}
 					}
 				}
 			}

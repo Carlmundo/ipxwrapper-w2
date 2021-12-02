@@ -18,6 +18,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
+#include <winsock2.h>
 #include <iphlpapi.h>
 #include <string>
 #include <vector>

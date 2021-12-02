@@ -1,0 +1,34 @@
+{
+	"files": [
+		{
+			"path": "src/router.c",
+			"bookmarks": [
+				{
+					"line": 439,
+					"column": 38,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/winsock.c",
+			"bookmarks": [
+				{
+					"line": 1368,
+					"column": 6,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/interface.c",
+			"bookmarks": [
+				{
+					"line": 160,
+					"column": 14,
+					"label": ""
+				}
+			]
+		}
+	]
+}

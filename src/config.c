@@ -16,6 +16,7 @@
 */
 
 #include <stdio.h>
+#include <winsock2.h>
 
 #include "config.h"
 #include "common.h"

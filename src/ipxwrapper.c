@@ -64,6 +64,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 	if(fdwReason == DLL_PROCESS_ATTACH)
 	{
 		log_open("ipxwrapper.log");
+
+		log_printf(LOG_INFO, "\n>>>>>> This is a Modifie Version: version 0.1 <<<<<<\n");
 		
 		log_printf(LOG_INFO, "IPXWrapper %s", version_string);
 		log_printf(LOG_INFO, "Compiled at %s", compile_time);
