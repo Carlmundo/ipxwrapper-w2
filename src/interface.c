@@ -28,7 +28,7 @@
 #include "common.h"
 #include "config.h"
 
-#define INTERFACE_CACHE_TTL 5
+#define INTERFACE_CACHE_TTL 60
 
 BOOL ipx_use_pcap;
 

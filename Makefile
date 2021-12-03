@@ -133,7 +133,7 @@ IPXCONFIG_OBJS := src/ipxconfig.o icons/ipxconfig.o src/addr.o src/interface.o s
 	src/config.o src/wpcap_stubs.o
 
 ipxconfig.exe: $(IPXCONFIG_OBJS)
-	$(CXX) $(CXXFLAGS) -Wl,--enable-stdcall-fixup -static-libgcc -static-libstdc++ -mwindows -o $@ $^ -liphlpapi -lcomctl32 -lws2_32
+	$(CXX) $(CXXFLAGS) -Wl,--enable-stdcall-fixup -static -static-libgcc -static-libstdc++ -mwindows -o $@ $^ -liphlpapi -lcomctl32 -lws2_32
 
 #
 # SHARED TARGETS

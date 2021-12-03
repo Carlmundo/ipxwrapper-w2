@@ -24,7 +24,7 @@ packets.
 
 ## Motivation
 
-To play `Atomic Bomberman`, we tried use PGY and then `ipxwrapper` over it. However, `ipxwrapper`
+To play `Atomic Bomberman`, we tried to use PGY and then `ipxwrapper` over it. However, `ipxwrapper`
 fails in VPN created by PGY because of two fundenmatal issues.
 
 First, the root cause is that PGY VPN doesn't support UDP broadcast / multicast. `ipxwrapper` relies
@@ -118,6 +118,3 @@ pacman -Sy nasm
     - `mswsock.dll`
     - `wsock32.dll`
   - Copy them to where you want to use `ipxwrapper` to replace the old files
-  - **NOTE:** Do not copy `ipxconfig.exe` generated here. It seems it doesn't has some lib
-    statically linked so may have issues on deployed machine. Simply use the unchanged one shipped
-    by original `ipxwrapper`.

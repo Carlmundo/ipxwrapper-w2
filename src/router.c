@@ -97,11 +97,18 @@ static void _init_socket(SOCKET *sock, uint16_t port, BOOL reuseaddr)
 	}
 }
 
+static uint32_t all_255_mask = 0;
+static uint32_t real_mask = 0;
+
+
 /* Initialise the UDP socket and router worker thread.
  * Aborts on failure.
 */
 void router_init(void)
 {
+	all_255_mask = inet_addr("255.255.255.255");
+	real_mask = inet_addr("255.255.0.0");
+
 	/* Event object used for notification of new packets and exit signal. */
 	
 	if((router_event = WSACreateEvent()) == WSA_INVALID_EVENT)
@@ -429,8 +436,6 @@ static void _handle_udp_recv(ipx_packet *packet, size_t packet_size, struct sock
 	}
 	
 	ipx_interface_t *i;
-	uint32_t all_255_mask = inet_addr("255.255.255.255");
-	uint32_t real_mask = inet_addr("255.255.0.0");
 	DL_FOREACH(allow_interfaces, i)
 	{
 		ipx_interface_ip_t *ip;
@@ -460,11 +465,23 @@ static void _handle_udp_recv(ipx_packet *packet, size_t packet_size, struct sock
 	 * IP address and destination IPX address so future send operations to
 	 * that IPX address can be unicast.
 	*/
+
+	if (min_log_level <= LOG_DEBUG) {
+		SOCKADDR_STORAGE send_addr;
+		size_t addrlen;
+		if(!addr_cache_get(&send_addr, &addrlen, addr32_in(packet->src_net), addr48_in(packet->src_node), packet->src_socket)) {
+			
+			IPX_STRING_ADDR(temp_src_addr, addr32_in(packet->src_net), addr48_in(packet->src_node), packet->src_socket);
+		
+			log_printf(LOG_DEBUG, ">> New ADDR Cached for %s --> %s:%u", temp_src_addr, inet_ntoa(src_ip.sin_addr), ntohs(src_ip.sin_port));
+		}
+	}
 	
 	addr_cache_set(
 		(struct sockaddr*)(&src_ip), sizeof(src_ip),
 		addr32_in(packet->src_net), addr48_in(packet->src_node), packet->src_socket
 	);
+
 	
 	_deliver_packet(packet->ptype,
 		addr32_in(packet->src_net),
