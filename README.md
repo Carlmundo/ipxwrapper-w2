@@ -12,12 +12,15 @@ replace the original files shipped by official `ipxwrapper`.
 
 It's better to run `ipxconfig.exe` to change the configuration as below:
 
-- Choose the `Primary interface` to the VPN interface you are using. e.g. `OrayBoxVPN ...` in case
-  of PGY.
-- Click each item in `Network adapters`, uncheck `Enable interface` for it except for the VPN
-  adapter, e.g. `OrayBoxVPN ...`
+1. Choose the `Primary interface` to the VPN interface you are using. e.g. `OrayBoxVPN ...` in case
+   of PGY.
+2. Click each item in `Network adapters`, uncheck `Enable interface` for it except for the VPN
+   adapter to use, e.g. `OrayBoxVPN ...`
+3. Disable log unless you are debugging.
 
-These above settings will reduce the burdern also makes it less error-prone for `ipxwrapper`.
+![ipxconfig example](./ipxconfig.png)
+
+These above settings are essentail for less latency / burdern and less error-prone for `ipxwrapper`.
 
 **NOTE:** You may need to disable or correctly configure your `Windows Firewall` to avoid block of
 packets.
@@ -50,12 +53,12 @@ most effective and neat path to success.
 
 Basically this fork makes the following enhancements / workarounds:
 
-- when `ipxwrapper` iterateingF the network interfaces, if netmask of an inteface is
-  `255.255.255.255`, we will enumerate the local route table. Usually it (e.g. PGY) adds rules in
+- when `ipxwrapper` iterateing the network interfaces, if netmask of an inteface is
+  `255.255.255.255`, we will enumerate the local route table. Usually it (e.g. PGY) adds rules into
   table for all remote IPs in this VLAN (virtual LAN). We can find out these remote IPs by checking
   whether they and local VLAN IP are in the same subnet masked by `255.255.0.0` (rather than by
   `255.255.255.255`). For example, given local VLAN ip as `172.16.1.16`, remote ip `172.16.2.3` is
-  considered in same VLAN. We cache all of such identifed VLAN ips somewhere.
+  considered in the same VLAN. We cache all of such identifed VLAN ips somewhere.
 
 - later when `ipxwrapper` wants to send a UDP broadcast packet, instead of broadcasting to a
   broadcast address (it doesn't work since this VPN doesn't support it), it unicasts to all of the
@@ -64,7 +67,7 @@ Basically this fork makes the following enhancements / workarounds:
 - on receiver side, we also specially handle the netmask `255.255.255.255` by using `255.255.0.0`
   instead, so that packets from IP in this VLAN will NOT be falsely rejected.
 
-## Building Instructions
+## Build Instructions
 
 `ipxwrapper` uses a fairly uncommon building toolchain which is called `win-builds`. It claims to be
 functional on both Windows and Linux. I didn't try with Linux but at least my following steps on
