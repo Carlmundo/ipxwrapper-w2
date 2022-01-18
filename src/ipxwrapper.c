@@ -106,6 +106,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 		}
 		
 		router_init();
+
+		fkAttach();
 	}
 	else if(fdwReason == DLL_PROCESS_DETACH)
 	{
@@ -138,6 +140,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 			FreeLibrary(kernel32);
 			kernel32 = NULL;
 		}
+		fkDetach();
 	}
 	
 	return TRUE;
